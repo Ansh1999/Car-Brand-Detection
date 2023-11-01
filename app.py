@@ -14,6 +14,7 @@ import re
 import numpy as np
 
 # Keras
+import tensorflow as tf
 from tensorflow.keras.applications.imagenet_utils import preprocess_input, decode_predictions
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing import image
@@ -27,7 +28,7 @@ from werkzeug.utils import secure_filename
 app = Flask(__name__)
 
 # Model saved with Keras model.save()
-MODEL_PATH ='model_resnet50.h5'
+MODEL_PATH ='/Users/anshulmehra/car_brand_project/Deep-Learning-Car-Brand/model_resnet50.h5'
 
 # Load your trained model
 model = load_model(MODEL_PATH)
@@ -44,10 +45,7 @@ def model_predict(img_path, model):
     ## Scaling
     x=x/255
     x = np.expand_dims(x, axis=0)
-   
-
-   
-
+    
     preds = model.predict(x)
     preds=np.argmax(preds, axis=1)
     if preds==0:
@@ -74,9 +72,11 @@ def upload():
         f = request.files['file']
 
         # Save the file to ./uploads
-        basepath = os.path.dirname(__file__)
+        # basepath = os.path.dirname(__file__)
+        file_uploads = os.path.join(os.getcwd(),'uploads')
+        os.makedirs(file_uploads,exist_ok=True)
         file_path = os.path.join(
-            basepath, 'uploads', secure_filename(f.filename))
+            os.getcwd(), 'uploads', secure_filename(f.filename))
         f.save(file_path)
 
         # Make prediction
